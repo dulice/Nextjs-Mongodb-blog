@@ -1,0 +1,7 @@
+.blogCard {
+  height: 150px;
+  border: 2px dashed gray;
+  text-align: center;
+  line-height: 9rem;
+  margin: 1rem 0;
+}
