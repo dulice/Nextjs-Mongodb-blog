@@ -11,15 +11,16 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
 
   const { data, error } = useSWR('posts', fetchPosts);
-  if(error) {
-    return {
-      notFound: true
+    if(error) {
+      return {
+        notFound: true
+      }
     }
-  }
 
   const handleDelete = async (id) => {
     setIsLoading(true);
-    const response = await fetch(`http://localhost:3000/api/post/${id}`, {
+    const PORT = process.env.PORT || "http://localhost:3000";
+    const response = await fetch(`${PORT}/api/post/${id}`, {
       method: 'DELETE',
     });
     const data = await response.json();
@@ -62,7 +63,9 @@ export default function Home() {
 }
 
 export const fetchPosts = async () => {
-  const response = await fetch("http://localhost:3000/api/blog");
+  const PORT = process.env.PORT || "http://localhost:3000";
+  const response = await fetch(`${PORT}/api/blog`);
   const {data} = await response.json();
+  console.log(data);
   return data;
 };

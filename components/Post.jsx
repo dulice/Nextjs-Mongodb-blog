@@ -8,18 +8,18 @@ const Post = ({ post, handleDelete, isLoading }) => {
   const router = useRouter();
   return (
     <>
-      <Col>
+      <Col xs={12} md={6}>
         <Image
           src={post.photo}
           alt=""
           width={1000}
           height={350}
-          style={{ objectFit: "cover" }}
-          className="w-100 rounded-1"
+          style={{ objectFit: "cover", width: "auto", height: "auto" }}
+          className="w-100 rounded-1 mt-2"
         />
       </Col>
-      <Col>
-        <div className="d-flex justify-content-between">
+      <Col xs={12} md={6}>
+        <div className="d-flex justify-content-between mt-2">
           <h5>{post.title}</h5>
           <div>
             <Button

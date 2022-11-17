@@ -24,7 +24,8 @@ const CountryId = ({ posts }) => {
 };
 
 export const getStaticPaths = async () => {
-  const response = await fetch("http://localhost:3000/api/blog");
+  const PORT = process.env.PORT;
+  const response = await fetch(`${PORT}/api/blog`);
   const { data } = await response.json();
   const paths = data.map((el) => {
     return {
@@ -40,7 +41,8 @@ export const getStaticPaths = async () => {
 
 export const getStaticProps = async (context) => {
   const { params } = context;
-  const response = await fetch(`http://localhost:3000/api/${params.countryId}`);
+  const PORT = process.env.PORT;
+  const response = await fetch(`${PORT}/api/${params.countryId}`);
   const data = await response.json();
   return {
     props: {
