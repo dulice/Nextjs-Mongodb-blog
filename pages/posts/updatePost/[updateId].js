@@ -1,14 +1,14 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
 import styles from "styles/blog-add.module.css";
 import {useRouter} from 'next/router';
-import moment from "moment";
+import axios from "axios";
+
+const PORT = process.env.NEXT_PUBLIC_PORT || "http://localhost:3000";
 
 export default function UpdatePost({ post }) {
-  const PORT = process.env.PORT;
   const router = useRouter();
-  const now = moment();
   const [image, setImage] = useState(post.photo || null);
   const [title, setTitle] = useState(post.title || "");
   const [country, setCountry] = useState(post.country || "");
@@ -119,10 +119,8 @@ export default function UpdatePost({ post }) {
 }
 
 export const getStaticPaths = async () => {
-  const PORT = process.env.PORT;
-  const response = await fetch(`${PORT}/api/blog`);
-  const {data} = await response.json();
-  const paths = data.map((el) => {
+  const { data: posts } = await axios.get(`${PORT}/api/blog`);
+  const paths = posts.data.map((el) => {
     return {
       params: {
         updateId: `${el._id}`
@@ -136,19 +134,16 @@ export const getStaticPaths = async () => {
   }
 }
 
-export const getStaticProps = async (context) => {
-  const PORT = process.env.PORT 
-  const { params } = context;
-  const response = await fetch(`${PORT}/api/post/${params.updateId}`);
-  const data = await response.json();
-  if(!data._id) {
+export const getStaticProps = async ({ params }) => {
+  const {data: post} = await axios.get(`${PORT}/api/post/${params.updateId}`);
+  if(!post._id) {
     return {
       notFound: true,
     }
   }
   return {
     props: {
-      post: data
+      post
     },
     revalidate: 10,
   }

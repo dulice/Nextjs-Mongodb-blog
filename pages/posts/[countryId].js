@@ -5,6 +5,9 @@ import styles from 'styles/Home.module.css'
 import { motion } from 'framer-motion';
 import { divVariant } from "components/divMotion";
 import { useRouter } from 'next/router';
+import axios from "axios";
+
+const PORT = process.env.NEXT_PUBLIC_PORT || "http://localhost:3000";
 
 const CountryId = ({ posts }) => {
   const router = useRouter();
@@ -24,10 +27,8 @@ const CountryId = ({ posts }) => {
 };
 
 export const getStaticPaths = async () => {
-  const PORT = process.env.PORT;
-  const response = await fetch(`${PORT}/api/blog`);
-  const { data } = await response.json();
-  const paths = data.map((el) => {
+  const { data: posts } = await axios.get(`${PORT}/api/blog`);
+  const paths = posts.data.map((el) => {
     return {
       params: { countryId: `${el.country}` },
     };
@@ -39,11 +40,8 @@ export const getStaticPaths = async () => {
   };
 };
 
-export const getStaticProps = async (context) => {
-  const { params } = context;
-  const PORT = process.env.PORT;
-  const response = await fetch(`${PORT}/api/${params.countryId}`);
-  const data = await response.json();
+export const getStaticProps = async ({ params }) => {
+  const { data } = await axios.get(`${PORT}/api/${params.countryId}`);
   return {
     props: {
       posts: data,

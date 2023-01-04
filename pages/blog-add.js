@@ -7,6 +7,8 @@ import moment from "moment";
 import { motion } from "framer-motion";
 import { divVariant } from "components/divMotion";
 
+const PORT = process.env.NEXT_PUBLIC_PORT || "http://localhost:3000";;
+
 export default function CreatePost() {
   const router = useRouter();
   const now = moment();
@@ -60,7 +62,6 @@ export default function CreatePost() {
       if (!photo) {
         alert("Please enter a photo");
       }
-      const PORT = process.env.PORT;
       const response = await fetch(`${PORT}/api/blog`, {
         method: "POST",
         body: JSON.stringify({

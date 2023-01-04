@@ -1,25 +1,18 @@
 import Head from "next/head";
 import { Container, Row } from "react-bootstrap";
 import styles from "../styles/Home.module.css";
-import useSWR from 'swr'
 import { useState } from "react";
 import Post from "components/Post";
 import Hero from "components/Hero";
 import HeroCategories from "components/HeroCategories";
+import axios from "axios";
 
-export default function Home() {
+export default function Home({ posts }) {
   const [isLoading, setIsLoading] = useState(false);
-
-  const { data, error } = useSWR('posts', fetchPosts);
-    if(error) {
-      return {
-        notFound: true
-      }
-    }
 
   const handleDelete = async (id) => {
     setIsLoading(true);
-    const PORT = process.env.PORT || "http://localhost:3000";
+    const PORT = process.env.NEXT_PUBLIC_PORT || "http://localhost:3000";
     const response = await fetch(`${PORT}/api/post/${id}`, {
       method: 'DELETE',
     });
@@ -47,13 +40,13 @@ export default function Home() {
           <div className={styles.explore}>
             <h3 className="text-center mb-5">Explore Cities</h3>
             <div>
-              {!data ? <div>Loading... </div> : (
-                data.map((post) => (
+              {
+                posts.data.map((post) => (
                   <Row className={styles.post} key={post._id}>
                     <Post post={post} handleDelete={handleDelete} isLoading={isLoading}/>
                   </Row>
                 ))
-              )}
+              }
             </div>
           </div>
         </Container>
@@ -62,10 +55,13 @@ export default function Home() {
   );
 }
 
-export const fetchPosts = async () => {
-  const PORT = process.env.PORT || "http://localhost:3000";
-  const response = await fetch(`${PORT}/api/blog`);
-  const {data} = await response.json();
-  console.log(data);
-  return data;
-};
+export const getStaticProps = async () => {
+  const PORT = process.env.NEXT_PUBLIC_PORT || "http://localhost:3000";
+  const { data: posts } = await axios.get(`${PORT}/api/blog`);
+  return {
+    props: {
+      posts: posts
+    },
+    revalidate: 10,
+  }
+}
